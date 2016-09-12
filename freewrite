@@ -1,0 +1,54 @@
+#/usr/bin/env bash
+
+set -e
+
+usage() {
+  echo "usage:"
+  echo "  freewrite [create]            create today's writing"
+  echo "  freewrite open <yyyy-mm-dd>   open a writing"
+  echo ""
+}
+
+create() {
+  NOW=$(date +"%Y-%m-%d")
+  DIR=$HOME/.freewrite
+  mkdir -p $DIR
+  $EDITOR $DIR/$NOW
+  if [ ! -f $DIR/$NOW ]; then
+    exit 1
+  fi
+  gpg -c $DIR/$NOW
+  rm -f $DIR/$NOW
+  echo "created $NOW"
+}
+
+open() {
+  if [ ! -f $HOME/.freewrite/$1.gpg ]; then
+    echo "fatal: cannot found $1"
+    exit 1
+  fi
+  gpg $HOME/.freewrite/$1.gpg
+  $EDITOR $HOME/.freewrite/$1
+  rm -f $HOME/.freewrite/$1
+}
+
+if [ $# -eq 0 ]; then
+  create
+else
+  case $1 in
+    create)
+      create
+      ;;
+    open)
+      if [ -z $2 ]; then
+        usage
+        exit 1
+      fi
+      open $2
+      ;;
+    *)
+      usage
+      exit 1
+      ;;
+  esac
+fi
