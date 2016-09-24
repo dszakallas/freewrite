@@ -6,6 +6,7 @@ usage() {
   echo "usage:"
   echo "  freewrite [create]            create today's writing"
   echo "  freewrite open <yyyy-mm-dd>   open a writing"
+  echo "  freewrite edit <yyyy-mm-dd>   edit a writing"
   echo ""
 }
 
@@ -29,8 +30,12 @@ open() {
   fi
   gpg $HOME/.freewrite/$1.gpg
   $EDITOR $HOME/.freewrite/$1
+  if [ $2 == "edit" ]; then
+    gpg -c $HOME/.freewrite/$1
+  fi
   rm -f $HOME/.freewrite/$1
 }
+
 
 if [ $# -eq 0 ]; then
   create
@@ -45,6 +50,13 @@ else
         exit 1
       fi
       open $2
+      ;;
+    edit)
+      if [ -z $2 ]; then
+        usage
+        exit 1
+      fi
+      open $2 "edit"
       ;;
     *)
       usage

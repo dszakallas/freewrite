@@ -18,6 +18,7 @@ Additionally: encrypt your writing with a password to make sure others don't hav
 usage:
   freewrite [create]            create today's writing
   freewrite open <yyyy-mm-dd>   open a writing
+  freewrite edit <yyyy-mm-dd>   edit a writing
 ```
 
 Note: Your writings will be at `$HOME/.freewrite`
